@@ -1,3 +1,5 @@
+namespace AuthService.Config;
+
 // Application configurations
 public class Config
 {
