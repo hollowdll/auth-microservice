@@ -1,0 +1,15 @@
+**/bin
+**/obj
+**/out
+**/logs
+**/Dockerfile*
+**/docker-compose*
+**/*.md
+.git
+.gitignore
+.dockerignore
+.vs
+.vscode
+.env.template
+.env
+docs
