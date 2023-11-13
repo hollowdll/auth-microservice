@@ -9,8 +9,6 @@ namespace AuthService.Data;
 
 public static class SeedData
 {
-    private static readonly string[] roleNames = { "Admin", "User" };
-
     // Create database and initial data.
     public static async Task InitializeDatabase(IServiceScope scope, IWebHostEnvironment environment, ILogger logger)
     {
@@ -28,7 +26,7 @@ public static class SeedData
         await context.Database.MigrateAsync();
 
         // Create roles
-        foreach (var roleName in roleNames)
+        foreach (var roleName in AppRole.GetRoleNames())
         {
             var roleExist = await roleManager.RoleExistsAsync(roleName);
             if (!roleExist)
@@ -56,7 +54,7 @@ public static class SeedData
                 ?? throw new Exception("Created user was not found");
 
             // Admin user has all roles
-            await userManager.AddToRolesAsync(createdAdminUser, roleNames);
+            await userManager.AddToRolesAsync(createdAdminUser, AppRole.GetRoleNames());
         }
     }
 }
