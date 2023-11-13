@@ -1,5 +1,6 @@
 using AuthService.Data;
 using AuthService.Models;
+using AuthService.Config;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,12 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("UserDatabase")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("UserDatabase"), npgsqlOptions =>
+        npgsqlOptions.CommandTimeout(15)));
 
 // Configure identity system
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.Configure<AppConfig>(builder.Configuration.GetSection("AppConfig"));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -33,8 +37,7 @@ app.MapControllers();
 
 using (var serviceScope = app.Services.CreateScope())
 {
-    var services = serviceScope.ServiceProvider;
-    await SeedData.InitializeDatabase(services.GetRequiredService<ApplicationDbContext>());
+    await SeedData.InitializeDatabase(serviceScope, app.Environment, app.Logger);
 }
 
 await app.RunAsync();
