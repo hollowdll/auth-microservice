@@ -4,5 +4,5 @@ namespace AuthService.Models;
 
 public class AppUser : IdentityUser
 {
-
+    public DateTime CreatedAt { get; set; }
 }

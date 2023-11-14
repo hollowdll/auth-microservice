@@ -1,5 +1,3 @@
-using System.Reflection.Metadata;
-
 namespace AuthService.Models;
 
 public static class AppRole
