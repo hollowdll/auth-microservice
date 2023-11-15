@@ -38,10 +38,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     };
 });
 
-builder.Services.AddScoped<IJwtService, JwtService>();
-
 builder.Services.Configure<AppConfig>(builder.Configuration.GetSection("AppConfig"));
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
+
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

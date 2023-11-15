@@ -1,4 +1,3 @@
-using AuthService.Config;
 using System.Security.Claims;
 
 namespace AuthService.Services;
