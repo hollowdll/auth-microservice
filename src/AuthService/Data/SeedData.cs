@@ -16,6 +16,7 @@ public static class SeedData
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var config = scope.ServiceProvider.GetRequiredService<IOptions<AppConfig>>();
+        var passwordHashed = new PasswordHasher<AppUser>();
 
         // Reset database in dev mode.
         if (environment.IsDevelopment())
@@ -39,12 +40,9 @@ public static class SeedData
         var adminUser = await userManager.FindByNameAsync(config.Value.AdminUsername);
         if (adminUser == null)
         {
-            adminUser = new AppUser
-            {
-                UserName = config.Value.AdminUsername
-            };
+            adminUser = new AppUser(config.Value.AdminUsername);
 
-            var result = await userManager.CreateAsync(adminUser, config.Value.AdminPassword);
+            var result = await userManager.CreateAsync(adminUser, config.Value.AdminPassword + config.Value.PasswordPepper);
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);
@@ -61,12 +59,9 @@ public static class SeedData
         var normalUser = await userManager.FindByNameAsync("user1");
         if (normalUser == null)
         {
-            normalUser = new AppUser
-            {
-                UserName = "user1",
-            };
+            normalUser = new AppUser("user1");
 
-            var result = await userManager.CreateAsync(normalUser, "Password123!");
+            var result = await userManager.CreateAsync(normalUser, "Password123!" + config.Value.PasswordPepper);
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);
