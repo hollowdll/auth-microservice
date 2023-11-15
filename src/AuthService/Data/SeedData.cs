@@ -35,7 +35,7 @@ public static class SeedData
             }
         }
 
-        // Create users.
+        // Create admin user
         var adminUser = await userManager.FindByNameAsync(config.Value.AdminUsername);
         if (adminUser == null)
         {
@@ -50,11 +50,33 @@ public static class SeedData
                 throw new Exception(result.Errors.First().Description);
             }
 
-            var createdAdminUser = await userManager.FindByNameAsync(config.Value.AdminUsername)
+            var createdUser = await userManager.FindByNameAsync(adminUser.UserName)
                 ?? throw new Exception("Created user was not found");
 
             // Admin user has all roles
-            await userManager.AddToRolesAsync(createdAdminUser, AppRole.GetRoleNames());
+            await userManager.AddToRolesAsync(createdUser, AppRole.GetRoleNames());
+        }
+
+        // Create normal user
+        var normalUser = await userManager.FindByNameAsync("user1");
+        if (normalUser == null)
+        {
+            normalUser = new AppUser
+            {
+                UserName = "user1",
+            };
+
+            var result = await userManager.CreateAsync(normalUser, "Password123!");
+            if (!result.Succeeded)
+            {
+                throw new Exception(result.Errors.First().Description);
+            }
+
+            var createdUser = await userManager.FindByNameAsync(normalUser.UserName)
+                ?? throw new Exception("Created user was not found");
+
+            // Normal user has only role User
+            await userManager.AddToRoleAsync(createdUser, AppRole.User);
         }
     }
 }
