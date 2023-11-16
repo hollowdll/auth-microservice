@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
+using System.Text;
 
 namespace AuthService.Services;
 
@@ -21,7 +22,7 @@ public class JwtService : IJwtService
     public string GenerateToken(ClaimsIdentity claimsIdentity)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = new SymmetricSecurityKey(Convert.FromBase64String(_jwtConfig.SigningKey));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.SigningKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var tokenDescriptor = new SecurityTokenDescriptor

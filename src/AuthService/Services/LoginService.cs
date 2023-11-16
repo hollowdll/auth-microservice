@@ -9,13 +9,15 @@ namespace AuthService.Services;
 
 public class LoginService : ILoginService
 {
-    private UserManager<AppUser> _userManager;
-    private AppConfig _appConfig;
+    private readonly UserManager<AppUser> _userManager;
+    private readonly AppConfig _appConfig;
+    private readonly ILogger<LoginService> _logger;
 
-    public LoginService(UserManager<AppUser> userManager, IOptions<AppConfig> appConfig)
+    public LoginService(UserManager<AppUser> userManager, IOptions<AppConfig> appConfig, ILogger<LoginService> logger)
     {
         _userManager = userManager;
         _appConfig = appConfig.Value;
+        _logger = logger;
     }
 
     public async Task<ClaimsIdentity> Login(LoginRequest request)
