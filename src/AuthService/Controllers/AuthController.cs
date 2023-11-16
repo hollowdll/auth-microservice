@@ -1,4 +1,5 @@
 using System.Net;
+using System.Security.Authentication;
 using AuthService.Models;
 using AuthService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -36,10 +37,15 @@ public class AuthController : ControllerBase
 
             return Ok("Login successful");
         }
-        catch (Exception e)
+        catch (AuthenticationException e)
         {
             _logger.LogError("Login error: {Error}", e);
             return BadRequest("Incorrect login credentials");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Login error: {Error}", e);
+            return BadRequest("Service error");
         }
     }
 }

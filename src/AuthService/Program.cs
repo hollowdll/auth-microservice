@@ -10,6 +10,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddGrpc();
+
 // Configure database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("UserDatabase"), npgsqlOptions =>
@@ -61,6 +63,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGrpcService<GrpcAuth.LoginService>();
 app.MapControllers();
 
 using (var serviceScope = app.Services.CreateScope())
