@@ -2,6 +2,7 @@ using System.Net;
 using System.Security.Authentication;
 using AuthService.Models;
 using AuthService.Services;
+using AuthService.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthService.Controllers;
@@ -35,17 +36,17 @@ public class AuthController : ControllerBase
 
             Response.Headers.Add("Authorization", "Bearer " + jwtToken);
 
-            return Ok("Login successful");
+            return Ok(AuthUtility.LoginSuccessMessage);
         }
         catch (AuthenticationException e)
         {
             _logger.LogError("Login error: {Error}", e);
-            return BadRequest("Incorrect login credentials");
+            return BadRequest(AuthUtility.IncorrectCredentialsMessage);
         }
         catch (Exception e)
         {
             _logger.LogError("Login error: {Error}", e);
-            return BadRequest("Service error");
+            return BadRequest(AuthUtility.ServiceFailureMessage);
         }
     }
 }

@@ -1,5 +1,6 @@
 using Grpc.Core;
 using AuthService.Services;
+using AuthService.Utility;
 using System.Security.Authentication;
 
 namespace GrpcAuth;
@@ -26,25 +27,25 @@ public class LoginService : Login.LoginBase
             var claimsIdentity = await _loginService.Login(MapFromGrpcLoginRequest(request));
             var jwtToken = _jwtService.GenerateToken(claimsIdentity);
 
-            context.Status = new Status(StatusCode.OK, "Call successful");
+            context.Status = new Status(StatusCode.OK, AuthUtility.LoginSuccessMessage);
             // Include JWT token in gRPC metadata
             context.ResponseTrailers.Add("Authorization", "Bearer " + jwtToken);
 
-            return new LoginResponse { Message = "Login successful" };
+            return new LoginResponse { Message = AuthUtility.LoginSuccessMessage };
         }
         catch (AuthenticationException e)
         {
             _logger.LogError("gRPC login error: {Error}", e);
-            context.Status = new Status(StatusCode.InvalidArgument, "Incorrect login credentials");
+            context.Status = new Status(StatusCode.InvalidArgument, AuthUtility.IncorrectCredentialsMessage);
 
-            return new LoginResponse { Message = "Incorrect login credentials" };
+            return new LoginResponse { Message = AuthUtility.IncorrectCredentialsMessage };
         }
         catch (Exception e)
         {
             _logger.LogError("gRPC login error: {Error}", e);
-            context.Status = new Status(StatusCode.Internal, "Service error");
+            context.Status = new Status(StatusCode.Internal, AuthUtility.ServiceFailureMessage);
 
-            return new LoginResponse { Message = "Service error" };
+            return new LoginResponse { Message = AuthUtility.ServiceFailureMessage };
         }
     }
 
