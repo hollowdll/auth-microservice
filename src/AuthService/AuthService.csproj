@@ -12,6 +12,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.24" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.24" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.24" />
+    <PackageReference Include="Grpc.AspNetCore" version="2.58.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Proto\auth.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>
