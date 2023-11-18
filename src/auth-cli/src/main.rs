@@ -9,9 +9,9 @@ use auth_cli::{
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
-    let grpc_client = GrpcClient::build().await?;
+    let mut grpc_client = GrpcClient::build().await?;
 
-    auth_cli::run(&cli, &grpc_client).await;
+    auth_cli::run(&cli, &mut grpc_client).await;
 
     Ok(())
 }
