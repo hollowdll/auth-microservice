@@ -15,12 +15,8 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     /// Login with username and password.
-    Login(LoginArgs),
-}
-
-#[derive(Args)]
-pub struct LoginArgs {
-    /// Use REST API instead of gRPC.
-    #[arg(short, long)]
-    pub rest: bool,
+    Login {
+        #[arg(long)]
+        rest: bool,
+    },
 }
