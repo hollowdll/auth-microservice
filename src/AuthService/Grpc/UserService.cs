@@ -17,6 +17,7 @@ public class UserService : User.UserBase
         _userManager = userManager;
     }
 
+    // Get users from database and return them.
     public override async Task<GetUsersResponse> GetUsers(GetUsersRequest request, ServerCallContext context)
     {
         _logger.LogInformation("gRPC call method {Method}", context.Method);
