@@ -18,11 +18,11 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient) {
 
             let username = match ask_user_input("Username: ") {
                 Ok(username) => username,
-                Err(_) => return,
+                Err(e) => return eprintln!("Failed to read username: {}", e),
             };
-            let password = match ask_user_input("Password: ") {
+            let password = match rpassword::prompt_password("Password: ") {
                 Ok(password) => password,
-                Err(_) => return,
+                Err(e) => return eprintln!("Failed to read password: {}", e),
             };
 
             let login_request = LoginRequest {
@@ -44,10 +44,9 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient) {
 fn ask_user_input(text_to_ask: &str) -> io::Result<String> {
     let mut input = String::new();
 
-    print!("{text_to_ask}");
-    io::stdout().flush().expect("Unexpected I/O error");
+    print!("{}", text_to_ask);
+    io::stdout().flush()?;
     if let Err(e) = io::stdin().read_line(&mut input) {
-        eprintln!("Failed to read line: {}", e);
         return Err(e);
     }
     let input = input.trim().to_string();
