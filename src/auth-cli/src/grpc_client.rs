@@ -32,7 +32,8 @@ impl GrpcClient {
         })
     }
 
-    /// Login with username and password.
+    /// gRPC call to login with username and password.
+    /// Stores received JWT access token to file if success.
     /// 
     /// Returns the response.
     pub async fn login(&mut self, login_request: LoginRequest) -> Result<Response<LoginResponse>, Box<dyn Error>> {
@@ -56,7 +57,7 @@ impl GrpcClient {
         Ok(response)
     }
 
-    /// Gets users from the user database.
+    /// gRPC call to get users from the user database.
     /// 
     /// Returns the users.
     pub async fn get_users(&mut self) -> Result<Response<GetUsersResponse>, Box<dyn Error>> {
