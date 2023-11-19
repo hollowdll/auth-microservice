@@ -8,7 +8,11 @@ use auth::{
 use std::error::Error;
 use tonic::{transport::Channel, Response};
 use self::auth::{LoginResponse, GetUsersResponse};
-use crate::storage::store_jwt;
+use crate::{
+    storage::store_jwt,
+    util::print_response_time,
+};
+use std::time::Instant;
 
 pub mod auth {
     tonic::include_proto!("auth_service");
@@ -38,8 +42,12 @@ impl GrpcClient {
     /// Returns the response.
     pub async fn login(&mut self, login_request: LoginRequest) -> Result<Response<LoginResponse>, Box<dyn Error>> {
         let request = tonic::Request::new(login_request);
+        let now = Instant::now();
         let response = match self.login_client.login_user(request).await {
-            Ok(response) => response,
+            Ok(response) => {
+                print_response_time(&now);
+                response
+            },
             Err(e) => {
                 return Err(e.message().into());
             }
@@ -62,8 +70,12 @@ impl GrpcClient {
     /// Returns the users.
     pub async fn get_users(&mut self) -> Result<Response<GetUsersResponse>, Box<dyn Error>> {
         let request = tonic::Request::new(GetUsersRequest {});
+        let now = Instant::now();
         let response = match self.user_client.get_users(request).await {
-            Ok(response) => response,
+            Ok(response) => {
+                print_response_time(&now);
+                response
+            },
             Err(e) => {
                 return Err(e.message().into());
             }

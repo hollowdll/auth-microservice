@@ -1,4 +1,7 @@
-use std::io::{self, Write};
+use std::{
+    io::{self, Write},
+    time::Instant,
+};
 
 /// Asks user input and returns it trimmed.
 pub fn ask_user_input(prompt: &str) -> io::Result<String> {
@@ -12,4 +15,9 @@ pub fn ask_user_input(prompt: &str) -> io::Result<String> {
     let input = input.trim().to_string();
 
     Ok(input)
+}
+
+/// Prints how long successful network request took in milliseconds.
+pub fn print_response_time(instant: &Instant) {
+    println!("Response time: {} ms", instant.elapsed().as_millis());
 }
