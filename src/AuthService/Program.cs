@@ -64,6 +64,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGrpcService<GrpcAuth.LoginService>();
+app.MapGrpcService<GrpcAuth.UserService>();
 app.MapControllers();
 
 using (var serviceScope = app.Services.CreateScope())

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcAuth";
+
+package AuthService;
+
+message UserData {
+    string id = 1;
+    string username = 2;
+    repeated string roles = 3;
+}
+
+message GetUsersRequest {}
+
+message GetUsersResponse {
+    repeated UserData users = 1;
+}
+
+service User {
+    rpc GetUsers (GetUsersRequest) returns (GetUsersResponse) {}
+}
