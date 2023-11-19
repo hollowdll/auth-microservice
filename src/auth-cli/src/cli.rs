@@ -1,7 +1,6 @@
 use clap::{
     Parser,
     Subcommand,
-    Args,
 };
 
 /// CLI client to interact with the authentication microservice.

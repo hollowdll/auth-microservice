@@ -5,8 +5,8 @@ use auth::{
 };
 use std::error::Error;
 use tonic::{transport::Channel, Response};
-
 use self::auth::LoginResponse;
+use crate::storage::store_jwt;
 
 pub mod auth {
     tonic::include_proto!("auth_service");
@@ -40,12 +40,14 @@ impl GrpcClient {
             }
         };
 
-        let metadata = response.metadata();
-        let jwt_token = metadata.get("Authorization").unwrap().to_str().unwrap();
-        let message = response.get_ref().message.as_str();
-        
-        println!("Response: {}", message);
-        println!("JWT: {}", jwt_token);
+        let jwt = response.metadata()
+            .get("Authorization")
+            .unwrap()
+            .as_bytes();
+
+        if let Err(e) = store_jwt(jwt) {
+            return Err(format!("Error storing JWT: {}", e).into());
+        }
 
         Ok(response)
     }

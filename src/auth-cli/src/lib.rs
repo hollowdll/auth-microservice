@@ -7,6 +7,7 @@ use crate::grpc_client::auth::LoginRequest;
 pub mod grpc_client;
 pub mod cli;
 pub mod user;
+pub mod storage;
 
 pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient) {
     match cli.command {
@@ -32,7 +33,7 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient) {
 
             match grpc_client.login(login_request).await {
                 Ok(response) => {
-                    println!("success");
+                    println!("{}", response.get_ref().message.as_str());
                 },
                 Err(e) => eprintln!("Failed to login: {}", e)
             }
