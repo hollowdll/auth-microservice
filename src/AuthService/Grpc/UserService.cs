@@ -1,11 +1,12 @@
 using Grpc.Core;
-using System.Security.Authentication;
 using Microsoft.AspNetCore.Identity;
 using AuthService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GrpcAuth;
 
+[Authorize]
 public class UserService : User.UserBase
 {
     private readonly ILogger<UserService> _logger;
@@ -18,6 +19,7 @@ public class UserService : User.UserBase
     }
 
     // Get users from database and return them.
+    [Authorize(Roles = AppRole.Admin)]
     public override async Task<GetUsersResponse> GetUsers(GetUsersRequest request, ServerCallContext context)
     {
         _logger.LogInformation("gRPC call method {Method}", context.Method);

@@ -16,7 +16,6 @@ public static class SeedData
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var config = scope.ServiceProvider.GetRequiredService<IOptions<AppConfig>>();
-        var passwordHashed = new PasswordHasher<AppUser>();
 
         // Reset database in dev mode.
         if (environment.IsDevelopment())
