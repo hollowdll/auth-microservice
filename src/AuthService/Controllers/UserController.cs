@@ -23,8 +23,10 @@ public class UserController : ControllerBase
         _userManager = userManager;
     }
 
+    // Gets users from database and returns them.
+    // Requires Admin role.
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = AppRole.Admin)]
     public async Task<ActionResult<List<UserData>>> GetUsers()
     {
         var users = await _userManager.Users.ToListAsync();

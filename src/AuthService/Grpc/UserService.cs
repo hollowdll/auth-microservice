@@ -19,6 +19,8 @@ public class UserService : User.UserBase
     }
 
     // Get users from database and return them.
+    // Requires Admin role.
+    [Authorize(Roles = AppRole.Admin)]
     public override async Task<GetUsersResponse> GetUsers(GetUsersRequest request, ServerCallContext context)
     {
         _logger.LogInformation("gRPC call method {Method}", context.Method);
