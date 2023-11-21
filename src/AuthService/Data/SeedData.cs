@@ -72,5 +72,27 @@ public static class SeedData
             // Normal user has only role User
             await userManager.AddToRoleAsync(createdUser, AppRole.User);
         }
+
+        /* Populate with some other users if necessary
+        if (environment.IsDevelopment())
+        {
+            // Populate with some users
+            for (int i = 1; i <= 100; i++)
+            {
+                var user = new AppUser("abc" + i);
+
+                var result = await userManager.CreateAsync(user, "Password123!" + config.Value.PasswordPepper);
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+
+                var createdUser = await userManager.FindByNameAsync(user.UserName)
+                    ?? throw new Exception("Created user was not found");
+
+                await userManager.AddToRoleAsync(createdUser, AppRole.User);
+            }
+        }
+        */
     }
 }
