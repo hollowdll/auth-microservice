@@ -5,6 +5,7 @@ use crate::grpc_client::auth::LoginRequest;
 use util::ask_user_input;
 
 pub mod grpc_client;
+pub mod http_client;
 pub mod cli;
 pub mod user;
 pub mod storage;

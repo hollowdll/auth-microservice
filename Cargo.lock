@@ -121,6 +121,7 @@ dependencies = [
  "prost",
  "reqwest",
  "rpassword",
+ "serde",
  "tokio",
  "tonic",
  "tonic-build",
