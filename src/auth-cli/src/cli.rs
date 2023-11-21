@@ -43,4 +43,8 @@ pub struct ListUserArgs {
     /// Use REST API instead of gRPC
     #[arg(long)]
     pub rest: bool,
+
+    /// Hide results.
+    #[arg(long)]
+    pub hide: bool,
 }

@@ -45,24 +45,36 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient, http_client: &HttpClie
 
                     // use REST API instead of gRPC
                     if args.rest {
+                        println!("Using REST API");
                         let data = match http_client.get_users().await {
                             Ok(data) => data,
                             Err(e) => return eprintln!("{}", e),
                         };
+                        
+                        println!("User count: {}", data.len());
+                        if args.hide {
+                            return
+                        }
 
-                        return for user in data {
+                        return for user in &data {
                             println!("{}: {}", count, user);
                             count += 1;
                         }
                     }
 
+                    println!("Using gRPC");
                     let response = match grpc_client.get_users().await {
                         Ok(response) => response,
                         Err(e) => return eprintln!("{}", e)
                     };
-                    let users = &response.get_ref().users;
+                    let data = &response.get_ref().users;
 
-                    for user in users {
+                    println!("User count: {}", data.len());
+                    if args.hide {
+                        return
+                    }
+
+                    for user in data {
                         println!("{}: {}", count, user);
                         count += 1;
                     }
