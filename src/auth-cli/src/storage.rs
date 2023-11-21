@@ -1,6 +1,9 @@
 use std::{
     path::{Path, PathBuf},
-    fs::File,
+    fs::{
+        File,
+        read_to_string,
+    },
     io::{self, Write},
     env::current_exe,
 };
@@ -34,4 +37,14 @@ pub fn store_jwt(jwt: &[u8]) -> io::Result<()> {
     write_buf_to_file(jwt, &file_path)?;
 
     Ok(())
+}
+
+/// Gets JWT access token from a file
+/// in the executable's parent directory.
+pub fn get_jwt() -> io::Result<String> {
+    let dir = get_exec_parent_dir()?;
+    let file_path = dir.join(JWT_FILE_NAME);
+    let jwt = read_to_string(file_path)?;
+
+    Ok(jwt)
 }

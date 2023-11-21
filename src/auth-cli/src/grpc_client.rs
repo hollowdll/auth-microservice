@@ -9,7 +9,10 @@ use std::error::Error;
 use tonic::{transport::Channel, Response};
 use self::auth::{LoginResponse, GetUsersResponse};
 use crate::{
-    storage::store_jwt,
+    storage::{
+        store_jwt,
+        get_jwt,
+    },
     util::print_response_time,
 };
 use std::time::Instant;
@@ -69,7 +72,14 @@ impl GrpcClient {
     /// 
     /// Returns the users.
     pub async fn get_users(&mut self) -> Result<Response<GetUsersResponse>, Box<dyn Error>> {
-        let request = tonic::Request::new(GetUsersRequest {});
+        let jwt = match get_jwt() {
+            Ok(jwt) => jwt,
+            Err(e) => return Err(format!("Error getting JWT: {}", e).into()),
+        };
+
+        let mut request = tonic::Request::new(GetUsersRequest {});
+        request.metadata_mut().insert("authorization", jwt.parse().unwrap());
+
         let now = Instant::now();
         let response = match self.user_client.get_users(request).await {
             Ok(response) => {
@@ -77,6 +87,8 @@ impl GrpcClient {
                 response
             },
             Err(e) => {
+                eprintln!("Status code: {}", e.code());
+                eprintln!("{}", e);
                 return Err(e.message().into());
             }
         };

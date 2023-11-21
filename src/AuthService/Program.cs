@@ -18,8 +18,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         npgsqlOptions.CommandTimeout(15)));
 
 // Configure identity system
-builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+builder.Services.AddIdentityCore<AppUser>(options =>
     options.SignIn.RequireConfirmedAccount = false)
+        .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
@@ -61,6 +62,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGrpcService<GrpcAuth.LoginService>();

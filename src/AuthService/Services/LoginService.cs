@@ -32,6 +32,12 @@ public class LoginService : ILoginService
         }
 
         var claimsIdentity = await GetUserClaimsIdentity(appUser);
+        var roles = await _userManager.GetRolesAsync(appUser);
+
+        // Add user roles to claims
+        foreach (var role in roles) {
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+        }
 
         return claimsIdentity;
     }
