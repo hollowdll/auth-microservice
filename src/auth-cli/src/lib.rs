@@ -1,18 +1,19 @@
 use cli::{Cli, UserCommands};
-use grpc_client::GrpcClient;
+use grpc::GrpcClient;
 use cli::Commands;
-use crate::grpc_client::auth::LoginRequest;
+use http::HttpClient;
+use crate::grpc::auth::LoginRequest;
 use util::ask_user_input;
 
-pub mod grpc_client;
-pub mod http_client;
+pub mod grpc;
+pub mod http;
 pub mod cli;
 pub mod user;
 pub mod storage;
 pub mod util;
 
 /// Runs the program and handles the passed commands.
-pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient) {
+pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient, http_client: &HttpClient) {
     match &cli.command {
         Some(Commands::Login(_args)) => {
             println!("Login with username and password");
@@ -39,7 +40,19 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient) {
         }
         Some(Commands::User { command }) => {
             match command {
-                Some(UserCommands::Ls(_args)) => {
+                Some(UserCommands::Ls(args)) => {
+                    // use REST API instead of gRPC
+                    if args.rest {
+                        let data = match http_client.get_users().await {
+                            Ok(data) => data,
+                            Err(e) => return eprintln!("{}", e),
+                        };
+
+                        return for user in data {
+                            println!("{}", user);
+                        }
+                    }
+
                     let response = match grpc_client.get_users().await {
                         Ok(response) => response,
                         Err(e) => return eprintln!("{}", e)

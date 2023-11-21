@@ -34,9 +34,13 @@ pub struct LoginArgs {}
 
 #[derive(Subcommand)]
 pub enum UserCommands {
-    /// List users
+    /// List users. Uses gRPC by default.
     Ls(ListUserArgs)
 }
 
 #[derive(Args)]
-pub struct ListUserArgs {}
+pub struct ListUserArgs {
+    /// Use REST API instead of gRPC
+    #[arg(long)]
+    pub rest: bool,
+}
