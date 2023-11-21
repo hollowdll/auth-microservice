@@ -32,7 +32,7 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient) {
 
             let response = match grpc_client.login(login_request).await {
                 Ok(response) => response,
-                Err(e) => return eprintln!("Failed to login: {}", e)
+                Err(e) => return eprintln!("{}", e)
             };
             println!("{}", response.get_ref().message.as_str());
         }
@@ -41,7 +41,7 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient) {
                 Some(UserCommands::Ls(_args)) => {
                     let response = match grpc_client.get_users().await {
                         Ok(response) => response,
-                        Err(e) => return eprintln!("Failed to list users: {}", e)
+                        Err(e) => return eprintln!("{}", e)
                     };
                     let users = &response.get_ref().users;
 

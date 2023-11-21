@@ -87,9 +87,15 @@ impl GrpcClient {
                 response
             },
             Err(e) => {
-                eprintln!("Status code: {}", e.code());
-                eprintln!("{}", e);
-                return Err(e.message().into());
+                match e.code() {
+                    tonic::Code::PermissionDenied => {
+                        return Err(format!("Permission denied: {}", e.code()).into());
+                    }
+                    tonic::Code::Unauthenticated => {
+                        return Err(format!("Unauthenticated: {}", e.code()).into());
+                    }
+                    _ => return Err(format!("{}", e.code()).into()),
+                }
             }
         };
 
