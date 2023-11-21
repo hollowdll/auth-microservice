@@ -42,8 +42,8 @@ impl HttpClient {
         if !response.status().is_success() {
             return Err(format!("Failed to get users: {}", response.status()).into());
         }
-        print_response_time(&now);
         let data = response.json::<Vec<UserData>>().await?;
+        print_response_time(&now);
 
         Ok(data)
     }

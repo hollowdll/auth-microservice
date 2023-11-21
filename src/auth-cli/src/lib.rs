@@ -41,6 +41,8 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient, http_client: &HttpClie
         Some(Commands::User { command }) => {
             match command {
                 Some(UserCommands::Ls(args)) => {
+                    let mut count: u64 = 1;
+
                     // use REST API instead of gRPC
                     if args.rest {
                         let data = match http_client.get_users().await {
@@ -49,7 +51,8 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient, http_client: &HttpClie
                         };
 
                         return for user in data {
-                            println!("{}", user);
+                            println!("{}: {}", count, user);
+                            count += 1;
                         }
                     }
 
@@ -60,11 +63,8 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient, http_client: &HttpClie
                     let users = &response.get_ref().users;
 
                     for user in users {
-                        println!("{{");
-                        println!("  ID: {}", user.id);
-                        println!("  Username: {}", user.username);
-                        println!("  Roles: {:?}", user.roles);
-                        println!("}}");
+                        println!("{}: {}", count, user);
+                        count += 1;
                     }
                 }
                 None => return
