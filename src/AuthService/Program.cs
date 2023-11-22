@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using AuthService.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 var databaseConnectionString = builder.Configuration.GetConnectionString("UserDatabase");
-
-builder.Services.AddGrpc();
 
 // Configure database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -43,33 +43,42 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     };
 });
 
+// Add other services
 builder.Services.Configure<AppConfig>(builder.Configuration.GetSection("AppConfig"));
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 
+builder.Services.AddGrpc();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ApplicationDbContext>("PostgreSQL");
 
 DbConnection.CheckDatabaseConnection(databaseConnectionString);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Use Swagger only in development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Add middlewares
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGrpcService<GrpcAuth.LoginService>();
 app.MapGrpcService<GrpcAuth.UserService>();
 app.MapControllers();
+app.MapHealthChecks("/health/summary", new HealthCheckOptions
+{
+    ResponseWriter = HealthCheckUtility.WriteResponse
+});
 
 using (var serviceScope = app.Services.CreateScope())
 {
