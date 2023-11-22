@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using AuthService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Google.Protobuf.WellKnownTypes;
 
 namespace GrpcAuth;
 
@@ -45,6 +46,7 @@ public class UserService : User.UserBase
         {
             Id = appUser.Id,
             Username = appUser.UserName,
+            CreatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(appUser.CreatedAt, DateTimeKind.Utc)),
         };
         
         foreach (var role in roles)

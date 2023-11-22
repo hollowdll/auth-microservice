@@ -48,6 +48,7 @@ public class UserController : ControllerBase
             Id = appUser.Id,
             Username = appUser.UserName,
             Roles = roles,
+            CreatedAt = appUser.CreatedAt,
         };
     }
 }

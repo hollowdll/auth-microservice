@@ -4,10 +4,13 @@ option csharp_namespace = "GrpcAuth";
 
 package AuthService;
 
+import "google/protobuf/timestamp.proto";
+
 message UserData {
     string id = 1;
     string username = 2;
     repeated string roles = 3;
+    google.protobuf.Timestamp created_at = 4;
 }
 
 message GetUsersRequest {}
