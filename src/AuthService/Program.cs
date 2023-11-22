@@ -9,12 +9,13 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var databaseConnectionString = builder.Configuration.GetConnectionString("UserDatabase");
 
 builder.Services.AddGrpc();
 
 // Configure database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("UserDatabase"), npgsqlOptions =>
+    options.UseNpgsql(databaseConnectionString, npgsqlOptions =>
         npgsqlOptions.CommandTimeout(15)));
 
 // Configure identity system
@@ -51,6 +52,8 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+DbConnection.CheckDatabaseConnection(databaseConnectionString);
 
 var app = builder.Build();
 
