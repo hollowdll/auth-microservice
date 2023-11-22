@@ -55,12 +55,12 @@ public static class SeedData
         }
 
         // Create normal user
-        var normalUser = await userManager.FindByNameAsync("user1");
+        var normalUser = await userManager.FindByNameAsync(config.Value.NormalUserUsername);
         if (normalUser == null)
         {
-            normalUser = new AppUser("user1");
+            normalUser = new AppUser(config.Value.NormalUserUsername);
 
-            var result = await userManager.CreateAsync(normalUser, "Password123!" + config.Value.PasswordPepper);
+            var result = await userManager.CreateAsync(normalUser, config.Value.NormalUserPassword + config.Value.PasswordPepper);
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);

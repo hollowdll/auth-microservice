@@ -11,4 +11,10 @@ public class AppConfig
 
     /// <summary>Password for system admin user.</summary>
     public string AdminPassword { get; set; } = null!;
+
+    /// <summary>Username for normal user.</summary>
+    public string NormalUserUsername { get; set; } = null!;
+
+    /// <summary>Password for normal user.</summary>
+    public string NormalUserPassword { get; set; } = null!;
 }
