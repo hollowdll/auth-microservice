@@ -21,7 +21,5 @@ services:
       - 5106:5106
     environment:
       - ConnectionStrings__UserDatabase=Host=postgres;Port=5432;Database=userdb;Username=userdb_user;Password=userdb_pass
-      - Kestrel__Endpoints__gRPC__Url=http://auth-microservice:5106
-      - Kestrel__Endpoints__Http__Url=http://auth-microservice:5105
     depends_on:
       - postgres

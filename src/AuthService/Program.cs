@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using AuthService.Utility;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 var databaseConnectionString = builder.Configuration.GetConnectionString("UserDatabase");
@@ -56,6 +57,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>("PostgreSQL");
+
+// Configure ports
+builder.WebHost.ConfigureKestrel(options => {
+    // Http1 for REST API and health checks port.
+    options.ListenAnyIP(5105, listenOptions => {
+        listenOptions.Protocols = HttpProtocols.Http1;
+    });
+
+    // Http2 for gRPC port.
+    options.ListenAnyIP(5106, listenOptions => {
+        listenOptions.Protocols = HttpProtocols.Http2;
+    });
+});
 
 DbConnection.CheckDatabaseConnection(databaseConnectionString);
 
