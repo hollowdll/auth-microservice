@@ -2,8 +2,11 @@ use cli::{Cli, UserCommands};
 use grpc::GrpcClient;
 use cli::Commands;
 use http::HttpClient;
-use crate::grpc::auth::LoginRequest;
-use util::ask_user_input;
+use util::{
+    ask_user_input,
+    print_using_grpc,
+    print_using_rest,
+};
 
 pub mod grpc;
 pub mod http;
@@ -15,7 +18,7 @@ pub mod util;
 /// Runs the program and handles the passed commands.
 pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient, http_client: &HttpClient) {
     match &cli.command {
-        Some(Commands::Login(_args)) => {
+        Some(Commands::Login(args)) => {
             println!("Login with username and password");
 
             let username = match ask_user_input("Username: ") {
@@ -27,16 +30,19 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient, http_client: &HttpClie
                 Err(e) => return eprintln!("Failed to read password: {}", e),
             };
 
-            let login_request = LoginRequest {
-                username,
-                password,
-            };
+            if args.rest {
+                print_using_rest();
+                if let Err(e) = http_client.login(username, password).await {
+                    return eprintln!("{}", e);
+                };
+            } else {
+                print_using_grpc();
+                if let Err(e) = grpc_client.login(username, password).await {
+                    return eprintln!("{}", e)
+                };
+            }
 
-            let response = match grpc_client.login(login_request).await {
-                Ok(response) => response,
-                Err(e) => return eprintln!("{}", e)
-            };
-            println!("{}", response.get_ref().message.as_str());
+            println!("Login succeeded");
         }
         Some(Commands::User { command }) => {
             match command {
@@ -45,7 +51,7 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient, http_client: &HttpClie
 
                     // use REST API instead of gRPC
                     if args.rest {
-                        println!("Using REST API");
+                        print_using_rest();
                         let data = match http_client.get_users().await {
                             Ok(data) => data,
                             Err(e) => return eprintln!("{}", e),
@@ -62,7 +68,7 @@ pub async fn run(cli: &Cli, grpc_client: &mut GrpcClient, http_client: &HttpClie
                         }
                     }
 
-                    println!("Using gRPC");
+                    print_using_grpc();
                     let response = match grpc_client.get_users().await {
                         Ok(response) => response,
                         Err(e) => return eprintln!("{}", e)

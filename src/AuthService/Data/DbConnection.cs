@@ -9,7 +9,7 @@ internal static class DbConnection
     public static void CheckDatabaseConnection(string connectionString)
     {
         var isConnected = false;
-        var maxAttempts = 3;
+        var maxAttempts = 5;
         var attemptCount = 0;
         var retryIntervalMilliseconds = 5000;
 

@@ -21,3 +21,13 @@ pub fn ask_user_input(prompt: &str) -> io::Result<String> {
 pub fn print_response_time(instant: &Instant) {
     println!("Response time: {} ms", instant.elapsed().as_millis());
 }
+
+/// Prints info that request is using gRPC.
+pub fn print_using_grpc() {
+    println!("Using gRPC");
+}
+
+/// Prints info that request is using REST.
+pub fn print_using_rest() {
+    println!("Using REST API");
+}

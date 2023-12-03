@@ -30,7 +30,11 @@ pub struct UserArgs {
 }
 
 #[derive(Args)]
-pub struct LoginArgs {}
+pub struct LoginArgs {
+    /// Use REST API instead of gRPC
+    #[arg(long)]
+    pub rest: bool,
+}
 
 #[derive(Subcommand)]
 pub enum UserCommands {

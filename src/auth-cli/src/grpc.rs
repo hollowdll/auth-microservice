@@ -43,8 +43,11 @@ impl GrpcClient {
     /// Stores received JWT access token to file if success.
     /// 
     /// Returns the response.
-    pub async fn login(&mut self, login_request: LoginRequest) -> Result<Response<LoginResponse>, Box<dyn Error>> {
-        let request = tonic::Request::new(login_request);
+    pub async fn login(&mut self, username: String, password: String) -> Result<Response<LoginResponse>, Box<dyn Error>> {
+        let request = tonic::Request::new(LoginRequest {
+            username,
+            password,
+        });
         let now = Instant::now();
         let response = match self.login_client.login_user(request).await {
             Ok(response) => {
