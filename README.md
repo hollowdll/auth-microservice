@@ -8,7 +8,7 @@ Authentication microservice built with C# and ASP.NET Core. Docker containers an
 - User database
 - Role-based access control
 - gRPC services and REST API
-- CLI tool with login
+- CLI tool
 
 ## Database
 
@@ -19,6 +19,50 @@ These provide production-ready user and database management that can be extended
 ## Passwords
 
 BCrypt hashing algorithm with pepper. Pepper is a secret value that is added to passwords before passing them to BCrypt. It provides an additional layer of security.
+
+## Environment
+
+| Name                            | Default value                                                 |
+|---------------------------------|---------------------------------------------------------------|
+| ConnectionStrings__UserDatabase | Host=localhost;Port=12345;Database=userdb;Username=userdb_user;Password=userdb_pass                                                                              |
+| AppConfig__PasswordPepper       | YourSecretPepper                                              |
+| AppConfig__AdminUsername        | admin                                                         |
+| AppConfig__AdminPassword        | Admin10!                                                      |
+| AppConfig__NormalUserUsername   | user1                                                         |
+| AppConfig__NormalUserPassword   | Pass10!                                                       |
+| JwtConfig__Issuer               | issuer.example.com                                            |
+| JwtConfig__Audience             | audience.example.com                                          |
+| JwtConfig__SigningKey           | Your Signing key.                                             |
+
+## CLI
+
+CLI tool is built with Rust. You need Rust tools to build it.
+
+Login can be done using both gRPC and REST. Login returns JWT access token and it gets saved to a file. After login, you can list all users (Admin role required.).
+
+```bash
+auth-cli --help
+```
+
+Login using gRPC service
+```bash
+auth-cli login
+```
+
+Login using REST API
+```bash
+auth-cli login --rest
+```
+
+List all users using gRPC service
+```bash
+auth-cli user ls
+```
+
+List all users using REST API
+```bash
+auth-cli user ls --rest
+```
 
 ## Docker
 
