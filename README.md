@@ -34,6 +34,23 @@ BCrypt hashing algorithm with pepper. Pepper is a secret value that is added to 
 | JwtConfig__Audience             | audience.example.com                                          |
 | JwtConfig__SigningKey           | Your Signing key.                                             |
 
+CLI
+
+| Name                            | Default value                                                 |
+|---------------------------------|---------------------------------------------------------------|
+| GRPC_API_URL                    | http://localhost:5106                                         |
+| REST_API_URL                    | http://localhost:5105/api/v1                                  |
+
+## Health checks
+
+`/health/summary` - Gives service health summary including database status. This endpoint is only available in port `5105`. gRPC port `5106` does not have this.
+
+## REST API
+
+POST `/api/v1/auth/login` - Login with username and password
+
+GET `/api/v1/users` - Get all users. Authentication and admin role required.
+
 ## CLI
 
 CLI tool is built with Rust. You need Rust tools to build it.
