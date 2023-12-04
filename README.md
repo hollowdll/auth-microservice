@@ -2,6 +2,8 @@
 
 Authentication microservice built with C# and ASP.NET Core. Docker containers and Docker Compose fully supported.
 
+![Schema auth-microservice](docs/schema.JPG)
+
 ## Features
 
 - JWT access tokens
