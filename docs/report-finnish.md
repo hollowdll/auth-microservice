@@ -196,6 +196,55 @@ Palvelun ja tietokannan ajo Docker Composella
 docker compose up -d
 ```
 
+### 2.1.7 Health checkit
+
+Tein palveluuni myös pienen sisäänrakennetun health checkin. Mikropalveluissa on tapana olla health checkeja, joilla voidaan varmistaa palvelun tila, että kaikki on kunnossa. Katso [Health check](../README.md#health-checks)
+
+Tässä esimerkki tilasta, missä palvelu ja tietokanta ovat OK.
+
+```json
+{
+  "status": "Healthy",
+  "results": {
+    "PostgreSQL": {
+      "status": "Healthy",
+      "description": null,
+      "data": {}
+    }
+  }
+}
+```
+
+### 2.1.8 Salasanat
+
+Salasanat eivät jää tietokantaan selkokielisiksi, vaan käytin BCrypt algoritmia, mikä on valmiina .NET identityssä. Tämän lisäksi käytin pepperiä salasanojen suojauksessa (https://en.wikipedia.org/wiki/Pepper_(cryptography)). Pepper on salainen arvo, mikä lisätään salasanaan, ennen kuin se syötetään BCryptille. Tämän jälkeen yhdistelmään lisätään salt-luku ja sitten hashataan.
+
+## 2.2 CLI tekniikat
+
+Komentoriviohjelman rakensin Rust-ohjelmointikielellä. Rust on avoimen lähdekoodin moderni järjestelmäohjelmointikieli, millä saa tehtyä esimerkiksi tehokkaita ja suorituskykyisiä komentoriviohjelmia. (https://www.rust-lang.org/)
+
+Riippuvuudet määritellään Cargo.toml tiedostoon ja Rustin cargo-työkalulla saa buildattua projektin
+
+```bash
+cargo build
+```
+
+### 2.2.1 clap
+
+Ohjelman pohjana käytin clap-nimistä kirjastoa (https://docs.rs/clap/latest/clap/). Sillä saa helposti tehtyä komentoriviohjelmia, mihin tulee valmiina laajennettavia komentoja ja ominaisuuksia.
+
+### 2.2.2 tokio
+
+Verkkopyyntöihin tarvitsin asynkronisen ajonajan, mihin käytin tokiota (https://github.com/tokio-rs/tokio). Tämän avulla pystyin käyttämään Rust-koodissani futureita eli async-await syntaksia. Rustin futuret ovat vähän kuinen JavaScriptin promiset.
+
+### 2.2.3 tonic
+
+gRPC pyyntöjen tekemiseksi mikropalveluuni tarvitsin gRPC clientin. Käytin tähän Rustin tonic-kirjastoa (https://github.com/hyperium/tonic). Pystyin generoimaan Rust-koodia mikropalveluuni tekemistäni .proto tiedostoista, ja näillä pystyin helposti tekemään gRPC clientin ohjelmaani.
+
+### 2.2.4 reqwest
+
+HTTP pyyntöjen tekemiseen REST API:in tarvitsin http clientin. Käytin tähän reqwest-kirjastoa, jolla sain samaan tapaan tehtyä HTTP clientin ohjelmaani. Tällä pystyin lähettämään verkkopyyntöjä mikropalveluuni.
+
 # 3 Arkkitehtuurikaavio
 
 Alla oleva kaavio havainnolistaa mikropalvelun rakennetta ja JWT autentikaation kulkua. Palvelussani on ainoastaan JWT access tokenit, eikä refresh tokeneja ole.
