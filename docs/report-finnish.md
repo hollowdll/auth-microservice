@@ -99,11 +99,44 @@ just keep the part starting with the #
 
 Though, these are pieces [Markdown syntax that did not work](markdown_not_supported_syntax.md) in VS Code markdown preview nor in GitHub version of the Markdown.
 
+# Ohjelmistokehityksen teknologioita - Seminaarityö
+
+Autentikaatiomikropalvelu
+
+Ohjelmistoarkkitehtuurit ja patternit
+
+Juuso Hakala
+
+4.12.2023
+
+# 1 Johdanto
+
+Seminaarityön tarkoitukseni oli rakentaa autentikaatiomikropalvelu hyödyntäen mikropalveluohjelmistoarkkitehtuuria. Tavoitteeni työn alussa oli saada palvelu Docker-kontiksi ja hyödyntää Dockeria myös kehityksessä. Lisäksi halusin kokeilla kontin julkaisua CSC:n Rahti-palvelun OpenShiftiin, ja harjoitella palvelun käyttöä ja sen ominaisuuksia.
+
+Mikropalveluarkkitehtuurin ideana on jakaa sovellus pienempiin osiin, jolloin se koostuu erillisistä palveluista, jotka kommunikoivat toistensa kanssa tarvittaessa. Jokaista palvelua voidaan kehittää yksilöllisesti, ja käyttöönotto tapahtuu tyypillisesti hyödyntäen konttiteknologioita. (https://fi.wikipedia.org/wiki/Mikropalvelu)
+
+Autentikointiin tarkoitukseni oli käyttää JSON Web Tokenia. Tiesin aiheesta jo hieman, joten ei tarvinnut aloittaa aiheen opiskelua nollasta. Palveluni tuli käyttämään sisäänkirjautumista, joten halusin tehdä pienen sovelluksen, jolla tätä pystyisi testata. Päädyin tekemään CLI-työkalun eli komentoriviohjelman, missä pystyy kirjautumaan sisään ja käyttämään palveluani. En ollut ikinä ennen tehnyt sisäänkirjautumista komentoriviohjelmassa, joten halusin oppia mahdollisimman paljon.
+
+Työn vaiheet lyhyesti
+
+1. Mikropalveluprojektin alustus ja GitHub repon luonti
+2. Alustavat riippuvuudet ja tietokannan konfigurointi
+3. Käyttäjien ja roolien luonti
+4. JWT autentikointi
+5. REST API ja sisäänkirjautuminen
+6. gRPC palvelut
+7. Docker
+8. CLI:n luonti
+9. Käyttäjien hakeminen
+10. Palvelun julkaisu OpenShiftiin
+
+# 2 Käytetyt tekniikat
+
+# 3 Arkkitehtuurikaavio
+
+# 4 Yhteenveto
 
 
-# Autentikaatio mikropalvelu
-
-Tähän tulee raportti, joka täyttyy ajan myötä. Vielä sekava, mutta siistimpi lopussa.
 
 ## OpenShift
 
