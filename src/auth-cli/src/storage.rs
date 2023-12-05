@@ -44,6 +44,10 @@ pub fn store_jwt(jwt: &[u8]) -> io::Result<()> {
 pub fn get_jwt() -> io::Result<String> {
     let dir = get_exec_parent_dir()?;
     let file_path = dir.join(JWT_FILE_NAME);
+
+    if !file_path.is_file() {
+        File::create(&file_path)?;
+    }
     let jwt = read_to_string(file_path)?;
 
     Ok(jwt)

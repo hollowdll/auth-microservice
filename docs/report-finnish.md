@@ -219,7 +219,7 @@ Tässä esimerkki tilasta, missä palvelu ja tietokanta ovat OK.
 
 Salasanat eivät jää tietokantaan selkokielisiksi, vaan käytin BCrypt algoritmia, mikä on valmiina .NET identityssä. Tämän lisäksi käytin pepperiä salasanojen suojauksessa (https://en.wikipedia.org/wiki/Pepper_(cryptography)). Pepper on salainen arvo, mikä lisätään salasanaan, ennen kuin se syötetään BCryptille. Tämän jälkeen yhdistelmään lisätään salt-luku ja sitten hashataan.
 
-## 2.2 CLI tekniikat
+## 2.2 CLI:n tekniikat
 
 Komentoriviohjelman rakensin Rust-ohjelmointikielellä. Rust on avoimen lähdekoodin moderni järjestelmäohjelmointikieli, millä saa tehtyä esimerkiksi tehokkaita ja suorituskykyisiä komentoriviohjelmia. (https://www.rust-lang.org/)
 
@@ -228,6 +228,8 @@ Riippuvuudet määritellään Cargo.toml tiedostoon ja Rustin cargo-työkalulla 
 ```bash
 cargo build
 ```
+
+Kun CLI:ssä kirjautuu sisään ja saa mikropalvelulta JWT access tokenin, ohjelma tallentaa sen tiedostoon samaan hakemistoon, missä ohjelma on. Kun tekee komentoja, jotka lähettää verkkopyyntöjä, ohjelma lukee JWT:n tiedostosta ja sisällyttää sen pyyntöön.
 
 ### 2.2.1 clap
 
@@ -245,7 +247,56 @@ gRPC pyyntöjen tekemiseksi mikropalveluuni tarvitsin gRPC clientin. Käytin tä
 
 HTTP pyyntöjen tekemiseen REST API:in tarvitsin http clientin. Käytin tähän reqwest-kirjastoa, jolla sain samaan tapaan tehtyä HTTP clientin ohjelmaani. Tällä pystyin lähettämään verkkopyyntöjä mikropalveluuni.
 
-# 3 Arkkitehtuurikaavio
+# 3 CLI:n toiminnot
+
+Optimoidun julkaisuversion CLI:stä saa buildattua komennolla
+
+```bash
+cargo build --release
+```
+
+Tämän jälkeen pitää asettaa kaksi ympäristömuuttujaa samassa shell-prosessissa, missä ajaa ohjelman. Käytin PowerShelliä Windows Terminaalilla, joten ympäristömuuttujien asettaminen on hieman erilainen kuin esim Linux-pohjaisessa bashissa.
+
+Lokaalisti pyörivä mikropalvelu, jonka saa Docker Composella käyntiin
+```PowerShell
+$env:REST_API_URL="http://localhost:5105/api/v1"
+```
+```PowerShell
+$env:GRPC_API_URL="http://localhost:5106"
+```
+
+Rahti-palvelun OpenShiftiin julkaistu mikropalvelu
+```PowerShell
+$env:REST_API_URL="http://auth-microservice-http1.rahtiapp.fi/api/v1"
+```
+```PowerShell
+$env:GRPC_API_URL="http://auth-microservice-http2.rahtiapp.fi"
+```
+
+gRPC vaati HTTP/2 toimiakseen. Pitkän ongelmanratkaisun jälkeen sain selville, että Rahti-palvelun OpenShift versio ei tue HTTP/2, joten gRPC:tä en saanut toimimaan siellä. REST API ja health check endpoint kuitenkin toimivat siellä.
+
+Tässä esimerkki sisäänkirjautumisesta Rahdissa pyörivään palveluun käyttäen REST API:a.
+
+![Login esimerkki](login_example.JPG)
+
+Tietoturvan parantamiseksi salasana ei näy kun sitä kirjoittaa. Tämän sai tehtyä helposti yhdellä Rustin kirjastolla (https://github.com/conradkleinespel/rpassword).
+
+Tässä vielä koodiesimerkki salasanan lukemisesta
+
+```Rust
+let password = match rpassword::prompt_password("Password: ") {
+    Ok(password) => password,
+    Err(e) => return eprintln!("Failed to read password: {}", e),
+};
+```
+
+Tässä esimerkki käyttäjien listaamisesta
+
+![User esimerkki](user_example.JPG)
+
+Katso kaikki komennot [Tästä](../README.md#cli)
+
+# 4 Arkkitehtuurikaavio
 
 Alla oleva kaavio havainnolistaa mikropalvelun rakennetta ja JWT autentikaation kulkua. Palvelussani on ainoastaan JWT access tokenit, eikä refresh tokeneja ole.
 
@@ -253,7 +304,7 @@ Sisäänkirjautuminen on sekä gRPC palveluissa, että REST API:ssa.
 
 ![Arkkitehtuurikaavio](schema.JPG)
 
-# 4 Yhteenveto
+# 5 Yhteenveto
 
 
 
