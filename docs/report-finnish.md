@@ -132,7 +132,51 @@ Työn vaiheet lyhyesti
 
 # 2 Käytetyt tekniikat
 
+## 2.1 Mikropalvelun työkalut
+
+Rakensin mikropalveluni C#-ohjelmointikielellä ja .NET frameworkin ASP.NET Corella. ASP.NET Core on avoimen lähdekoodin framework, millä voi rakentaa moderneja webbisovelluksia. Se soveltuu etenkin pilviympäristöissä suoritettaviin ohjelmistoihin. (https://github.com/dotnet/aspnetcore).
+
+Käytin .NET frameworkin versiota 6. Lisäksi hyödynsin .NET frameworkin CLI työkaluja, jotka helpottivat omaa työstämistäni.
+
+Projektin loin valmiilla pohjalla, jota lähdin muokkaamaan. Sen sai komennolla
+
+```bash
+dotnet new webapi
+```
+
+### 2.1.1 Tietokanta
+
+Tietokantana käytin PostgreSQL:ää. Mikropalvelussa käytin .NET frameworkin Entity Frameworkia relaatiotietokannan hallinnoimiseen (https://learn.microsoft.com/en-us/aspnet/entity-framework). Se on ORM eli object-relational mapper, millä voi luoda tietokantatauluja suoraan C#-koodista. Tämä työkalu oli minulle tuttu jo entuudestaan, ja itselleni se antoi hyvän kehittäjäkokemuksen.
+
+Tietokannan scheman sai generoitua komennolla
+
+```bash
+dotnet ef migrations add UserDatabase
+```
+
+Se generoi C#-kooditiedoston, jolla pystyy luomaan tietokannan. Mikropalveluni konfiguroin, että se luo tietokannan käynnistäessä, jos sitä ei ole.
+
+### 2.1.2 Käyttäjät
+
+Käyttäjien luontiin ja hallinnoimiseen käytin .NET frameworkin Identity systemia (https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-8.0&tabs=visual-studio). Sillä saa helposti tuotantovalmiin pohjan käyttäjätietojen hallinoimiseen, mitä voi tarvittaessa laajentaa ja muokata. Tietokantatauluja ei tällä tarvitse luoda käyttäjille, koska ne saa generoitua valmiiksi. Muutin kuitenkin valmiit tietokantataulujen nimet.
+
+### 2.1.3 JWT
+
+### 2.1.4 REST API
+
+### 2.1.5 gRPC
+
+### 2.1.6 Docker
+
+
+
 # 3 Arkkitehtuurikaavio
+
+Alla oleva kaavio havainnolistaa mikropalvelun rakennetta ja JWT autentikaation kulkua. Palvelussani on ainoastaan JWT access tokenit, eikä refresh tokeneja ole.
+
+Sisäänkirjautuminen on sekä gRPC palveluissa, että REST API:ssa.
+
+![Arkkitehtuurikaavio](schema.JPG)
 
 # 4 Yhteenveto
 
