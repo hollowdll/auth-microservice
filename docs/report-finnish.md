@@ -302,13 +302,11 @@ Alla oleva kaavio havainnolistaa mikropalvelun rakennetta ja JWT autentikaation 
 
 Sisäänkirjautuminen on sekä gRPC palveluissa, että REST API:ssa.
 
+Kaavio piirretty [Excalidraw:lla](https://excalidraw.com/)
+
 ![Arkkitehtuurikaavio](schema.JPG)
 
-# 5 Yhteenveto
-
-
-
-## OpenShift
+# 5 OpenShift
 
 Kirjautuminen Rahdin konttirekisteriin. Käytin PowerShelliä.
 ```
@@ -330,3 +328,41 @@ Tällä komennolla puskin imagen Rahdin konttirekisteriin omaan image streamiini
 ```
 docker push docker-registry.rahti.csc.fi/ohke-teknologiat-seminaari/auth-microservice:rahti
 ```
+
+Tämän jälkeen pystyin deployaamaan palvelun image streamista.
+
+# 6 Tulokset
+
+## 6.1 Toimivuus
+Kaikkein tärkein tulos oli, että sain mikropalvelun rakennettua. Sain sen päätoiminnallisuuden toimintakuntoiseksi ja Dockerilla kontiksi. JWT autentikaatio ja sisäänkirjautuminen toimi sekä REST API:lla, että gRPC:llä. Lisäksi käyttäjien roolit sain toimimaan kuin halusin. Kun palvelu generoi JWT tokenin, se kirjoittaa tokeniin käyttäjän roolit. Näin palvelu pystyy katsomaan, onko käyttäjällä tarvittava rooli johonkin toimenpiteeseen, kun pyynnön mukana tulee JWT.
+
+## 6.2 Ominaisuudet
+Ominaisuuksia palveluun ei ehtinyt kertyä kauheasti, mutta siitä on hyvä jatkaa, jos haluan jatkokehittää projektia. Suurimmat toiminnallisuudet palvelulla on sisäänkirjautuminen ja käyttäjien hakeminen tietokannasta. Palvelun sisällä on toki paljon asioita mitä tein, mutta ne eivät näy ulospäin.
+
+## 6.3 Docker
+Docker Composella sain palvelun pyörimään ongelmitta omalla koneellani PostgreSQL:n kera. Tein myös toisen docker-compose.yml tiedoston, jolla saa suoritettua pelkästään PostgreSQL:n. Tällä pystyin helpommin kehittämään palvelua, kun ajoin C#-projektia omalla koneellani, enkä Docker-kontissa.
+
+## 6.4 Ohjelmointikielen valinta
+Ihan alkuperäinen ajatus minulla oli rakentaa palvelu Go-ohjelmointikielellä. Go-kieltä olen halunnut oppia jo pitkään ja se on todella suosittu mikropalveluiden keskuudessa. Aikaa ei kuitenkaan ollut niin paljon, niin päädyin käyttämään C#-kieltä, koska se oli minulle entuudestaan tuttu. Opin kuitenkin mikropalveluista paljon uutta, mistä en aluksi ollut edes tietoinen.
+
+## 6.5 EF, Identity, JWT
+Entity Framework ja Identity, mitä käytin tietokantaan ja käyttäjien hallintaan, olivat minulle myös hieman tuttuja. JWT autentikaatiota en kuitenkaan ollut ennen tehnyt näiden kanssa, joten siitä tuli uusi yhdistelmä. ASP.NET Coressa on sisäänrakennettuna cookie-autentikaatio, joten JWT oli hieman työläämpi, koska se piti itse konfiguroida ja koodata.
+
+JWT autentikaation rakensin vain access tokenit, jotka vanhenee 30 minuutissa. Hieman tuotantovalmiimmassa JWT:ssä on mukana myös refresh tokenit, mitä olisin ehkä kokeillut, jos aikaa olisi ollut enemmän.
+
+## 6.6 gRPC
+gRPC oli minulle uutta. Olin siitä lukenut paljon aikaisemmin, mutta en ikinä kunnolla toteuttanut gRPC palvelua. Protocol Buffers, mitä gRPC käyttää oli minulle toki tuttu, koska käytän sitä yhdessä omassa projektissani. En ala tässä mainostamaan siitä, mutta jos kiinnostaa, niin olen käyttänyt sitä omassa tietokantamoottorissani (https://github.com/hollowdll/database-system). Kyseinen projekti on vielä kehitysvaiheessa.
+
+## 6.7 CLI
+CLI-työkalun rakentaminen oli hauska ja opettavainen kokemus. Olen pari vastaavanlaista pientä CLI:tä koodaillut Rustilla, mutta tässä oli hieman uutta, kuten gRPC client, JWT tokenin tallennus, ja sisäänkirjautuminen palvelimelle.
+
+JWT tokenin tallennus ei ollut ehkä kaikkein paras. Se tuli tallennettua tiedostoon selkokielisenä. Olisin halunnut kokeilla salata sen, mutta tähän ei aika riittänyt ja olisi varmaan mennyt vähän haastavaksi.
+
+## 6.8 OpenShift
+OpenShiftissä palvelun sain toimimaan vain puoliksi. Se ei tukenut HTTP/2, mitä gRPC käyttää, joten gRPC:tä en saanut siellä toimimaan. OpenShiftin toiminnallisuuksista ja konttien julkaisusta opin uutta. Se oli hyvä alusta aloittaa aiheen harjoittelu ja opiskelu, ja luulen että tulen hyötymään jatkossa oppimistani asioista.
+
+PostgreSQL-tietokantaa en OpenShiftiin pistänyt, koska versio mitä sinne saa ei toiminut palveluni kanssa. Tein Supabase-nimiseen palveluun PostgreSQL-tietokannan ja deployattu palvelu käytti sitä (https://github.com/supabase/supabase). Connection stringiä sai muutettua helposti muuttamalla ympäristömuuttujaa secretin kautta.
+
+Kauhean syvällisesti en ehtinyt asioita siellä opiskella, mutta muutaman aiheen opin paremmin, kuten image/konttirekisterin, imagen deployaus, image stream, podit, routet, ja secretit. Suunnittelen opiskelevani aiheesta lisää itsenäisesti kurssin jälkeen. 
+
+
