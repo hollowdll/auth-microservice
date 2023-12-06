@@ -1,104 +1,3 @@
-# Template, will be deleted later
-
-Note 1: These examples were written with VS Code that has the "Markdown PDF" extension installed. It also
-can be used to preview the markdown output. Right click on the .md file tab and select "Open Preview". Test your Markdown markup also in GitHub.
-
-Note 2: Sometimes you need more whitespace (a space, an empty line between blocks) to get some markdown markup to work
-
-# Level 1 (=chapter) heading, with one hash
-
-Normal text. *Italic text inside asterisk/star* 
-
-## Level 2 (=subchapter) title, with two hashes (and so on...)
-
-Normal text. **Strong text inside double asterisks/stars**
-
-[Text to show on the link](https://www.w3.org/) 
-
-## Bulleted items - unordered list with one star **and a space**
-
-* Potato
-* Carrot
-* Onion
-
-## Ordered list with just by giving all options the ordinal 1.  Easy to shuffle later!
-
-1. ready
-1. steady
-1. go!
-
-Inline code examples can be written inside backticks: `(life) => 42`
-
-```
-// code blocks with three backticks
-
-if(true) {
-    console.log('Hello, world!');
-}
-
-```
-
-
-> Quotes you can add with the bigger than sign, so they look like this.
-
-
-| code | country |
-| :--: | :-----: |
-| KEN  | Kenia   |
-| FIN  | Finland |
-| ABS  | Absurdia |
-
-<details><summary>Summary visible for hideable Details</summary>
-
-Hideable showable text for details.
-
-More text for details.
-
-</details>
-
-<hr />
-
-Look into the *Markdown* source code for how to add images linked from internet, this is the general architecture of the Finnish Finna service: 
-
-![Alternative text for e.g. people with impaired vision](https://www.kiwi.fi/download/attachments/200048777/Ohjelmistoarkkitehtuuri.png?version=1&modificationDate=1607524001948&api=v2)
-
-
-...or taken from local 'images' folder, like this complicated Wikipedia image of server architectures: 
-
-![Wikipedia's sample picture of server architecture](images/1200px-Wikimedia_Server_Architecture_(simplified).svg.png)
-
-Note: You can invoke the list of the other files in VS Code when you type ctrl+space or type in the dot/"the full stop" character  .
-
-Three ways to write the Horizontal rule:
-<hr />
-
----
-
-***
-
-This is how you can create the ...
-
-**Table of Contents**
-
-[Level 1 (=chapter) heading](#level-1-chapter-heading-with-one-hash) <br />
-[Level 2 (=subchapter) title](#level-2-subchapter-title-with-two-hashes-and-so-on) <br />
-[Bulleted items - unordered list with one start and a space](#bulleted-items---unordered-list-with-one-star-and-a-space) <br />
-
-Open the markdown file in GitHub.com and use it to copy the link that you need in creation of the table of contents,
-just keep the part starting with the #
-
-### Link to second file in same folder
-[Link to the second file](markdown_file2.md)
-
-
-## One "official" source for markdown syntax
-
-[CommonMark.org Markdown in 60 seconds](https://commonmark.org/help/)
-
-[CommonMark.org Markdown tutorial in 10 minutes](https://commonmark.org/help/tutorial/)
-
-Though, these are pieces [Markdown syntax that did not work](markdown_not_supported_syntax.md) in VS Code markdown preview nor in GitHub version of the Markdown.
-
 # Ohjelmistokehityksen teknologioita - Seminaarityö
 
 Autentikaatiomikropalvelu
@@ -115,7 +14,7 @@ Seminaarityön tarkoitukseni oli rakentaa autentikaatiomikropalvelu hyödyntäen
 
 Mikropalveluarkkitehtuurin ideana on jakaa sovellus pienempiin osiin, jolloin se koostuu erillisistä palveluista, jotka kommunikoivat toistensa kanssa tarvittaessa. Jokaista palvelua voidaan kehittää yksilöllisesti, ja käyttöönotto tapahtuu tyypillisesti hyödyntäen konttiteknologioita. (https://fi.wikipedia.org/wiki/Mikropalvelu)
 
-Autentikointiin tarkoitukseni oli käyttää JSON Web Tokenia. Tiesin aiheesta jo hieman, joten ei tarvinnut aloittaa aiheen opiskelua nollasta. Palveluni tuli käyttämään sisäänkirjautumista, joten halusin tehdä pienen sovelluksen, jolla tätä pystyisi testata. Päädyin tekemään CLI-työkalun eli komentoriviohjelman, missä pystyy kirjautumaan sisään ja käyttämään palveluani. En ollut ikinä ennen tehnyt sisäänkirjautumista komentoriviohjelmassa, joten halusin oppia mahdollisimman paljon.
+Autentikointiin tarkoitukseni oli käyttää JSON Web Tokenia. Tiesin aiheesta jo hieman, joten ei tarvinnut aloittaa aiheen opiskelua nollasta. Palveluni tuli käyttämään sisäänkirjautumista, joten halusin tehdä pienen sovelluksen, jolla tätä pystyisi testata. Päädyin tekemään CLI-työkalun eli komentoriviohjelman, missä pystyy kirjautumaan sisään ja käyttämään palveluani. En ollut ikinä ennen tehnyt sisäänkirjautumista komentoriviohjelmassa, joten halusin oppia tämän.
 
 Työn vaiheet lyhyesti
 
@@ -129,6 +28,8 @@ Työn vaiheet lyhyesti
 8. CLI:n luonti
 9. Käyttäjien hakeminen
 10. Palvelun julkaisu OpenShiftiin
+
+Katso myös projektin README.md [täältä](../README.md)
 
 # 2 Käytetyt tekniikat
 
@@ -181,6 +82,8 @@ gRPC on REST API:a nopeampi tiedonsiirrossa yleensä suuremmilla tietomäärill�
 Ideana on määritellä ensin .proto tiedostoon tietotyypit ja RPC:t. Tämän jälkeen .proto tiedostosta voi generoida jollekkin ohjelmointikielelle koodia, mitä voi kutsua. Käytin seuraavaa dokumentaatiota kun aloitin: https://learn.microsoft.com/en-us/aspnet/core/grpc/basics?view=aspnetcore-8.0.
 
 gRPC palvelut pyörivät portissa 5106, ja pitävät sisällään myös sisäänkirjautumisen ja käyttäjien hakemisen.
+
+.proto tiedostot löytyvät [täältä](../src/AuthService/Proto/)
 
 ### 2.1.6 Docker
 
@@ -237,7 +140,7 @@ Ohjelman pohjana käytin clap-nimistä kirjastoa (https://docs.rs/clap/latest/cl
 
 ### 2.2.2 tokio
 
-Verkkopyyntöihin tarvitsin asynkronisen ajonajan, mihin käytin tokiota (https://github.com/tokio-rs/tokio). Tämän avulla pystyin käyttämään Rust-koodissani futureita eli async-await syntaksia. Rustin futuret ovat vähän kuinen JavaScriptin promiset.
+Verkkopyyntöihin tarvitsin asynkronisen ajonajan, mihin käytin tokiota (https://github.com/tokio-rs/tokio). Tämän avulla pystyin käyttämään Rust-koodissani futureita eli async-await syntaksia. Rustin futuret ovat idealtaan samankaltaisia kuin JavaScriptin promiset.
 
 ### 2.2.3 tonic
 
@@ -248,6 +151,8 @@ gRPC pyyntöjen tekemiseksi mikropalveluuni tarvitsin gRPC clientin. Käytin tä
 HTTP pyyntöjen tekemiseen REST API:in tarvitsin http clientin. Käytin tähän reqwest-kirjastoa, jolla sain samaan tapaan tehtyä HTTP clientin ohjelmaani. Tällä pystyin lähettämään verkkopyyntöjä mikropalveluuni.
 
 # 3 CLI:n toiminnot
+
+## 3.1 Alustus
 
 Optimoidun julkaisuversion CLI:stä saa buildattua komennolla
 
@@ -275,6 +180,8 @@ $env:GRPC_API_URL="http://auth-microservice-http2.rahtiapp.fi"
 
 gRPC vaati HTTP/2 toimiakseen. Pitkän ongelmanratkaisun jälkeen sain selville, että Rahti-palvelun OpenShift versio ei tue HTTP/2, joten gRPC:tä en saanut toimimaan siellä. REST API ja health check endpoint kuitenkin toimivat siellä.
 
+## 3.2 Sisäänkirjautuminen
+
 Tässä esimerkki sisäänkirjautumisesta Rahdissa pyörivään palveluun käyttäen REST API:a.
 
 ![Login esimerkki](login_example.JPG)
@@ -290,7 +197,9 @@ let password = match rpassword::prompt_password("Password: ") {
 };
 ```
 
-Tässä esimerkki käyttäjien listaamisesta
+## 3.3 Käyttäjät
+
+Tässä esimerkki käyttäjien listaamisesta. Olen kirjautuneena admin-käyttäjänä.
 
 ![User esimerkki](user_example.JPG)
 
