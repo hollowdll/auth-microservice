@@ -6,7 +6,7 @@ Ohjelmistoarkkitehtuurit ja patternit
 
 Juuso Hakala
 
-4.12.2023
+7.12.2023
 
 # 1 Johdanto
 
@@ -57,9 +57,40 @@ dotnet ef migrations add UserDatabase
 
 Se generoi C#-kooditiedoston, jolla pystyy luomaan tietokannan. Mikropalveluni konfiguroin, että se luo tietokannan käynnistäessä, jos sitä ei ole.
 
+#### 2.1.1.1 Tietokannan schema
+
+Alla kuva tietokannan rakenteesta. Käyttämäni [Identity framework](#212-käyttäjät) luo valmiiksi paljon tauluja, mitä en tarvinnut ollenkaan. Projektissa käytin ainoastaan tauluja users, user_roles, ja roles.
+
+![Tietokanta](db_schema.JPG)
+
 ### 2.1.2 Käyttäjät
 
 Käyttäjien luontiin ja hallinnoimiseen käytin .NET frameworkin Identity järjestelmää (https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-8.0&tabs=visual-studio). Sillä saa helposti tuotantovalmiin pohjan käyttäjätietojen hallinoimiseen, mitä voi tarvittaessa laajentaa ja muokata. Tietokantatauluja ei tällä tarvitse luoda käyttäjille, koska ne saa generoitua valmiiksi. Muutin kuitenkin valmiit tietokantataulujen nimet.
+
+Käyttäjille lisäsin `created_at` ja `updated_at` kentät. Tämän sai laajentamalla C#-luokkaa `IdentityUser` luomalla oman käyttäjä-luokan.
+
+```C#
+public class AppUser : IdentityUser
+{
+    public AppUser()
+    {
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public AppUser(string username)
+    {
+        UserName = username;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    /// <summary>UTC timestamp when the user is created.</summary>
+    public DateTime CreatedAt { get; set; }
+    /// <summary>UTC timestamp when the user is updated.</summary>
+    public DateTime UpdatedAt { get; set; }
+}
+```
 
 ### 2.1.3 Autentikaatio
 
@@ -79,9 +110,18 @@ REST API:n lisäksi palvelussani on myös toisenlainen API. Käytin tähän gRPC
 
 gRPC on REST API:a nopeampi tiedonsiirrossa yleensä suuremmilla tietomäärillä. Minun projektissa nopeuksilla ei ollut melkein mitään eroa, koska tietomäärät olivat hyvin pienet. gRPC on kuitenkin tänä päivänä suosittu ja käytetty etenkin mikropalveluiden maailmassa, joten halusin kokeilla sitä.
 
-Ideana on määritellä ensin .proto tiedostoon tietotyypit ja RPC:t. Tämän jälkeen .proto tiedostosta voi generoida jollekkin ohjelmointikielelle koodia, mitä voi kutsua. Käytin seuraavaa dokumentaatiota kun aloitin: https://learn.microsoft.com/en-us/aspnet/core/grpc/basics?view=aspnetcore-8.0.
-
 gRPC palvelut pyörivät portissa 5106, ja pitävät sisällään myös sisäänkirjautumisen ja käyttäjien hakemisen.
+
+#### 2.1.5.1 Protocol Buffers
+
+Ideana on määritellä ensin .proto tiedostoon tietotyypit, servicet, ja RPC:t. Tämän jälkeen .proto tiedostosta voi generoida jollekkin ohjelmointikielelle koodia, mitä voi kutsua. Käytin seuraavaa dokumentaatiota kun aloitin: https://learn.microsoft.com/en-us/aspnet/core/grpc/basics?view=aspnetcore-8.0.
+
+Tässä esimerkki yksinkertaisesta RPC:stä
+```
+service Login {
+    rpc LoginUser (LoginRequest) returns (LoginResponse) {}
+}
+```
 
 .proto tiedostot löytyvät [täältä](../src/AuthService/Proto/)
 
@@ -146,6 +186,10 @@ Verkkopyyntöihin tarvitsin asynkronisen ajonajan, mihin käytin tokiota (https:
 
 gRPC pyyntöjen tekemiseksi mikropalveluuni tarvitsin gRPC clientin. Käytin tähän Rustin tonic-kirjastoa (https://github.com/hyperium/tonic). Pystyin generoimaan Rust-koodia mikropalveluuni tekemistäni .proto tiedostoista, ja näillä pystyin helposti tekemään gRPC clientin ohjelmaani.
 
+### 2.2.3.1 Protobuf
+
+Toisin kuin C# puolella, Rustin puolella tarvitsi Protocol Buffersin Protobuf-kääntäjän, jotta .proto tiedostot pystyi kääntämään Rust-koodiksi. C# puolella tämä tulee valmiina gRPC-riippuvuuden mukana. Tämä oli itselleni paras paikka ladata protobuf-kääntäjä: https://github.com/protocolbuffers/protobuf#protobuf-compiler-installation
+
 ### 2.2.4 reqwest
 
 HTTP pyyntöjen tekemiseen REST API:in tarvitsin http clientin. Käytin tähän reqwest-kirjastoa, jolla sain samaan tapaan tehtyä HTTP clientin ohjelmaani. Tällä pystyin lähettämään verkkopyyntöjä mikropalveluuni.
@@ -160,7 +204,7 @@ Optimoidun julkaisuversion CLI:stä saa buildattua komennolla
 cargo build --release
 ```
 
-Tämän jälkeen pitää asettaa kaksi ympäristömuuttujaa samassa shell-prosessissa, missä ajaa ohjelman. Käytin PowerShelliä Windows Terminaalilla, joten ympäristömuuttujien asettaminen on hieman erilainen kuin esim Linux-pohjaisessa bashissa.
+Tämän jälkeen pitää asettaa kaksi ympäristömuuttujaa samassa shell-prosessissa, missä ajaa ohjelman. Käytin PowerShelliä Windows Terminaalilla, joten ympäristömuuttujien asettaminen on hieman erilainen kuin esimerkiksi Linux-pohjaisessa bashissa.
 
 Lokaalisti pyörivä mikropalvelu, jonka saa Docker Composella käyntiin
 ```PowerShell
@@ -254,6 +298,8 @@ Docker Composella sain palvelun pyörimään ongelmitta omalla koneellani Postgr
 ## 6.4 Ohjelmointikielen valinta
 Ihan alkuperäinen ajatus minulla oli rakentaa palvelu Go-ohjelmointikielellä. Go-kieltä olen halunnut oppia jo pitkään ja se on todella suosittu mikropalveluiden keskuudessa. Aikaa ei kuitenkaan ollut niin paljon, niin päädyin käyttämään C#-kieltä, koska se oli minulle entuudestaan tuttu. Opin kuitenkin mikropalveluista paljon uutta, mistä en aluksi ollut edes tietoinen.
 
+Rustin valitsin CLI:n rakentamiseen, koska sitä osasin valmiiksi, ja se oli hyvä valinta kyseisen ohjelmiston tekemiseen. Rust on haastava kieli, mutta omia lempikieliäni. Omasta mielestäni se jos joku opettaa ohjelmoinnista paljon. Itse olen oppinut Rustista paljon ohjelmointikonsepteja, mitä esimerkiksi Python tai JavaScript eivät ole opettaneet minulle. Suosittelen kokeilemaan, jos haluaa kunnon hakkerifiiliksen kun koodaa!
+
 ## 6.5 EF, Identity, JWT
 Entity Framework ja Identity, mitä käytin tietokantaan ja käyttäjien hallintaan, olivat minulle myös hieman tuttuja. JWT autentikaatiota en kuitenkaan ollut ennen tehnyt näiden kanssa, joten siitä tuli uusi yhdistelmä. ASP.NET Coressa on sisäänrakennettuna cookie-autentikaatio, joten JWT oli hieman työläämpi, koska se piti itse konfiguroida ja koodata.
 
@@ -261,6 +307,8 @@ JWT autentikaation rakensin vain access tokenit, jotka vanhenee 30 minuutissa. H
 
 ## 6.6 gRPC
 gRPC oli minulle uutta. Olin siitä lukenut paljon aikaisemmin, mutta en ikinä kunnolla toteuttanut gRPC palvelua. Protocol Buffers, mitä gRPC käyttää oli minulle toki tuttu, koska käytän sitä yhdessä omassa projektissani. En ala tässä mainostamaan siitä, mutta jos kiinnostaa, niin olen käyttänyt sitä omassa tietokantamoottorissani (https://github.com/hollowdll/database-system). Kyseinen projekti on vielä kehitysvaiheessa.
+
+gRPC oli haastava, mutta opettava. Opettelin vain pintaraapaisun aiheesta, ja siitä olisi saanut vielä paljon enemmän irti. Hyvä puoli siinä on, että se ei ole lukittu mihinkään tiettyyn ohjelmointikieleen tai teknologiaan.
 
 ## 6.7 CLI
 CLI-työkalun rakentaminen oli hauska ja opettavainen kokemus. Olen pari vastaavanlaista pientä CLI:tä koodaillut Rustilla, mutta tässä oli hieman uutta, kuten gRPC client, JWT tokenin tallennus, ja sisäänkirjautuminen palvelimelle.
@@ -272,6 +320,16 @@ OpenShiftissä palvelun sain toimimaan vain puoliksi. Se ei tukenut HTTP/2, mit�
 
 PostgreSQL-tietokantaa en OpenShiftiin pistänyt, koska versio mitä sinne saa ei toiminut palveluni kanssa. Tein Supabase-nimiseen palveluun PostgreSQL-tietokannan ja deployattu palvelu käytti sitä (https://github.com/supabase/supabase). Connection stringiä sai muutettua helposti muuttamalla ympäristömuuttujaa secretin kautta.
 
-Kauhean syvällisesti en ehtinyt asioita siellä opiskella, mutta muutaman aiheen opin paremmin, kuten image/konttirekisterin, imagen deployaus, image stream, podit, routet, ja secretit. Suunnittelen opiskelevani aiheesta lisää itsenäisesti kurssin jälkeen. 
+Kauhean syvällisesti en ehtinyt asioita siellä opiskella, mutta muutaman aiheen opin paremmin, kuten image/konttirekisterin, imagen deployaus, image stream, podit, routet, ja secretit. Suunnittelen opiskelevani aiheesta lisää itsenäisesti kurssin jälkeen.
 
+# 7 Lopetus
 
+Kiitos lukemisesta!
+
+Työstäni tuli paljon laajempi kuin aluksi suunnittelin. Siihen upposi huomattavasti enemmän aikaa, kuin ehdotettu 20 tuntia. Lisäksi jouduin ottamaan yli viikon tauon armeijan kertausharjoituksen takia.
+
+Opin paljon uutta ja olen tyytyväinen omaan lopputulokseeni.
+
+Linkki videoon: (Tähän videolinkki)
+
+[Takaisin ylös](#ohjelmistokehityksen-teknologioita---seminaarityö)
