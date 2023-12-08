@@ -330,6 +330,6 @@ Työstäni tuli paljon laajempi kuin aluksi suunnittelin. Siihen upposi huomatta
 
 Opin paljon uutta ja olen tyytyväinen omaan lopputulokseeni.
 
-Linkki videoon: (Tähän videolinkki)
+Linkki videoon: https://video.haaga-helia.fi/media/t/0_kqk38idl
 
 [Takaisin ylös](#ohjelmistokehityksen-teknologioita---seminaarityö)
