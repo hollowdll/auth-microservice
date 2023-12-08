@@ -2,11 +2,15 @@
 
 Autentikaatiomikropalvelu
 
-Ohjelmistoarkkitehtuurit ja patternit
+Seminaari: Ohjelmistoarkkitehtuurit ja patternit
 
 Juuso Hakala
 
-7.12.2023
+8.12.2023
+
+Video: https://video.haaga-helia.fi/media/t/0_kqk38idl
+
+Git-repositorio: https://github.com/hollowdll/auth-microservice
 
 # 1 Johdanto
 
