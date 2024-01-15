@@ -57,6 +57,8 @@ GET `/api/v1/users` - Get all users. Authentication and admin role required.
 
 CLI tool is built with Rust. You need Rust tools to build it.
 
+You can install Rust here: https://www.rust-lang.org/tools/install
+
 Start by setting environment variables in your shell process.
 
 ```bash
@@ -68,6 +70,16 @@ If you are using PowerShell
 ```PowerShell
 $Env:GRPC_API_URL="http://localhost:5106"
 $Env:REST_API_URL="http://localhost:5105/api/v1"
+```
+
+Build the binary
+```bash
+cargo build
+```
+
+Or build more optimized release version
+```bash
+cargo build --release
 ```
 
 Login can be done using both gRPC and REST. Login returns JWT access token and it gets saved to a file. After login, you can list all users (Admin role required.).
