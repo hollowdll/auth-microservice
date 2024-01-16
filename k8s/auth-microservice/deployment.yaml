@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: auth-microservice
+  name: auth-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-microservice
+  template:
+    metadata:
+      labels:
+        app: auth-microservice
+      name: auth-microservice
+    spec:
+      containers:
+        - name: auth-microservice
+          image: ghcr.io/hollowdll/auth-microservice:1.0.0
+          ports:
+            - containerPort: 5105
+            - containerPort: 5106
+          envFrom:
+            - secretRef:
+                name: auth-microservice-secret
